@@ -2,6 +2,8 @@
 import flatpickr from 'flatpickr';
 // Дополнительный импорт стилей
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
+import 'notiflix/dist/notiflix-3.2.6.min.css';
 
 const refs = {
   input: document.querySelector('#datetime-picker'),
@@ -42,7 +44,19 @@ flatpickr(refs.input, options);
 
 function dateChoice() {
   if (nowDate > selectedDate) {
-    return window.alert('Please choose a date in the future');
+    return Notiflix.Notify.failure('Please choose a date in the future', {
+      timeout: 50000,
+      backOverlay: true,
+      plainText: true,
+      position: 'center-top',
+      clickToClose: true,
+      cssAnimationStyle: 'from-top',
+      failure: {
+        background: '#ff5549',
+        backOverlayColor: '#880808',
+      },
+    });
+    // return window.alert('Please choose a date in the future');
   }
   updateTimerText(convertMs(deltaMs));
   refs.startBtn.removeAttribute('disabled');
@@ -73,11 +87,22 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 function OnStartBtnTimerStart() {
+  nowDate = Date.now();
+  timerData();
   intervalID = setInterval(() => {
     deltaMs -= 1000;
     if (deltaMs <= 0) {
       clearInterval(intervalID);
-      return;
+      return Notiflix.Report.success(
+        'Yours time has ended',
+        'Game over',
+        'purrrfect',
+        {
+          width: '360px',
+          svgSize: '120px',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+        }
+      );
     }
     updateTimerText(convertMs(deltaMs));
     console.log(convertMs(deltaMs));
@@ -85,9 +110,9 @@ function OnStartBtnTimerStart() {
   refs.startBtn.setAttribute('disabled', 'true');
 }
 
-function updateTimerText(timer) {
-  refs.daysEl.textContent = String(timer.days).padStart(2, '0');
-  refs.hoursEl.textContent = String(timer.hours).padStart(2, '0');
-  refs.minutesEl.textContent = String(timer.minutes).padStart(2, '0');
-  refs.secondsEl.textContent = String(timer.seconds).padStart(2, '0');
+function updateTimerText({ days, hours, minutes, seconds }) {
+  refs.daysEl.textContent = String(days).padStart(2, '0');
+  refs.hoursEl.textContent = String(hours).padStart(2, '0');
+  refs.minutesEl.textContent = String(minutes).padStart(2, '0');
+  refs.secondsEl.textContent = String(seconds).padStart(2, '0');
 }
