@@ -9,6 +9,20 @@ function OnBtnClick(e) {
   e.preventDefault();
 
   const { amount, step, delay } = e.currentTarget.elements;
+  if (amount.value <= 0 || step.value < 0 || delay.value < 0) {
+    return Notiflix.Notify.failure('Please enter correct data', {
+      timeout: 50000,
+      backOverlay: true,
+      plainText: true,
+      position: 'center-top',
+      clickToClose: true,
+      cssAnimationStyle: 'from-top',
+      failure: {
+        background: '#ff5549',
+        backOverlayColor: '#880808',
+      },
+    });
+  }
 
   for (let i = 0; i < amount.value; i++) {
     const delayCounter = i * Number(step.value) + Number(delay.value);
